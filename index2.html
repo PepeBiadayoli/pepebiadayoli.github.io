@@ -120,6 +120,8 @@
             margin: 10px 0;
             display: flex;
             gap: 10px;
+            flex-wrap: wrap;
+            width: 100%;
         }
 
         input[type="text"],
@@ -127,7 +129,8 @@
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
-            flex: 1;
+            flex: 1 1 45%; /* que ocupen hasta 45% del ancho disponible */
+            min-width: 120px; /* evitar que se hagan demasiado pequeños */
         }
 
         #resumen {
@@ -463,31 +466,31 @@
         }
         renderMesas();
         function actualizarTiempos() {
-  mesas.forEach((mesa, index) => {
-    if (mesa.running) {
-      const tiempoUsado = calcularTiempoUsado(mesa);
-      const total = calcularTotal(mesa);
+            mesas.forEach((mesa, index) => {
+                if (mesa.running) {
+                    const tiempoUsado = calcularTiempoUsado(mesa);
+                    const total = calcularTotal(mesa);
 
-      const mesaElement = document.querySelectorAll('.mesa')[index];
-      if (mesaElement) {
-        // Buscar el div que contiene el texto "🕒 Tiempo:"
-        const tiempoLabel = Array.from(mesaElement.querySelectorAll('div'))
-          .find(div => div.textContent.includes('🕒 Tiempo:'));
+                    const mesaElement = document.querySelectorAll('.mesa')[index];
+                    if (mesaElement) {
+                        // Buscar el div que contiene el texto "🕒 Tiempo:"
+                        const tiempoLabel = Array.from(mesaElement.querySelectorAll('div'))
+                            .find(div => div.textContent.includes('🕒 Tiempo:'));
 
-        if (tiempoLabel) {
-          tiempoLabel.innerHTML = `<strong>🕒 Tiempo:</strong> ${formatTime(tiempoUsado)}`;
+                        if (tiempoLabel) {
+                            tiempoLabel.innerHTML = `<strong>🕒 Tiempo:</strong> ${formatTime(tiempoUsado)}`;
+                        }
+
+                        const totalDiv = mesaElement.querySelector('.mesa-header div');
+                        if (totalDiv) {
+                            totalDiv.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+                        }
+                    }
+                }
+            });
+
+            actualizarResumen();
         }
-
-        const totalDiv = mesaElement.querySelector('.mesa-header div');
-        if (totalDiv) {
-          totalDiv.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
-        }
-      }
-    }
-  });
-
-  actualizarResumen();
-}
 
 
 
