@@ -1,0 +1,499 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Administrador de Mesas de Billar</title>
+    <style>
+        :root {
+            --color-primary: #2c3e50;
+            --color-success: #27ae60;
+            --color-danger: #c0392b;
+            --color-warning: #f1c40f;
+        }
+
+        body {
+            font-family: 'Segoe UI', sans-serif;
+            margin: 20px;
+            background-color: #f4f6f8;
+        }
+
+        h1 {
+            text-align: center;
+            color: var(--color-primary);
+            margin-bottom: 30px;
+        }
+
+        #mesasContainer {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 20px;
+        }
+
+        .mesa {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            transition: transform 0.2s, box-shadow 0.2s;
+            position: relative;
+        }
+
+        .mesa:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+        }
+
+        .mesa.running {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+        }
+
+        .mesa.expirada {
+            background: linear-gradient(135deg, #f8d7da 0%, #f5c6cb 100%);
+            border-left: 6px solid var(--color-danger);
+        }
+
+        .mesa-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .mesa-header h2 {
+            margin: 0;
+            color: var(--color-primary);
+        }
+
+        .controls {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        button {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: opacity 0.2s;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        .btn-success {
+            background-color: var(--color-success);
+            color: white;
+        }
+
+        .btn-danger {
+            background-color: var(--color-danger);
+            color: white;
+        }
+
+        .btn-warning {
+            background-color: var(--color-warning);
+            color: black;
+        }
+
+        .btn-primary {
+            background-color: var(--color-primary);
+            color: white;
+        }
+
+        .extras-list {
+            margin: 10px 0;
+            padding-left: 20px;
+        }
+
+        .extras-list li {
+            display: flex;
+            justify-content: space-between;
+            margin: 5px 0;
+        }
+
+        .input-group {
+            margin: 10px 0;
+            display: flex;
+            gap: 10px;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            flex: 1;
+        }
+
+        #resumen {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+            display: flex;
+            gap: 25px;
+            flex-wrap: wrap;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        .notificacion {
+            background: white;
+            border-left: 4px solid var(--color-danger);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+            }
+
+            to {
+                transform: translateX(0);
+            }
+        }
+
+        #configPanel {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+            display: none;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>🏁 Administrador de Mesas de Billar</h1>
+
+    <div id="resumen">
+        <div>Mesas Totales: <strong id="totalMesas">0</strong></div>
+        <div>Mesas Activas: <strong id="mesasActivas">0</strong></div>
+        <div>Ingresos Totales: <strong id="ingresosTotales">$0.00</strong></div>
+    </div>
+
+    <div id="mesasContainer"></div>
+
+    <div class="controls" style="justify-content: center; margin: 20px 0;">
+        <button id="addMesaBtn" class="btn-primary">➕ Nueva Mesa</button>
+        <button onclick="mostrarConfig()" class="btn-primary">⚙️ Configuración</button>
+        <button onclick="exportarDatos()" class="btn-primary">📤 Exportar</button>
+        <button onclick="document.getElementById('importInput').click()" class="btn-primary">📥 Importar</button>
+        <input type="file" id="importInput" hidden accept=".json">
+    </div>
+
+    <div id="configPanel">
+        <h3>Configuración</h3>
+        <label>Tarifa por minuto ($):
+            <input type="number" id="tarifaInput" step="0.01" value="0.33">
+        </label>
+        <br><br>
+        <label>
+            <input type="checkbox" id="soundToggle" checked> Sonido de notificaciones
+        </label>
+        <br><br>
+        <button onclick="guardarConfig()" class="btn-success">Guardar</button>
+        <button onclick="ocultarConfig()" class="btn-danger">Cerrar</button>
+    </div>
+
+    <div id="notificaciones"></div>
+    <audio id="alertaSonido" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+    <script>
+        let mesas = JSON.parse(localStorage.getItem("mesas")) || [];
+        let tarifaPorHora = parseFloat(localStorage.getItem("tarifa")) || 20; // Cobro por hora
+        let soundEnabled = localStorage.getItem("soundEnabled") !== "false";
+
+        function guardarDatos() {
+            localStorage.setItem("mesas", JSON.stringify(mesas));
+            localStorage.setItem("tarifa", tarifaPorHora);
+            localStorage.setItem("soundEnabled", soundEnabled);
+        }
+
+        function formatTime(minutos) {
+            const totalSegundos = Math.floor(minutos * 60);
+            const horas = Math.floor(totalSegundos / 3600);
+            const mins = Math.floor((totalSegundos % 3600) / 60);
+            const segs = totalSegundos % 60;
+            return `${horas}h ${mins}m ${segs}s`;
+        }
+
+        function mostrarNotificacion(mensaje) {
+            const notificacion = document.createElement('div');
+            notificacion.className = 'notificacion';
+            notificacion.innerHTML = `
+        <span>${mensaje}</span>
+        <button onclick="this.parentElement.remove()" class="btn-danger">×</button>
+      `;
+
+            document.getElementById('notificaciones').appendChild(notificacion);
+            if (soundEnabled) document.getElementById('alertaSonido').play().catch(() => { });
+            setTimeout(() => notificacion.remove(), 5000);
+        }
+
+        function calcularTiempoUsado(mesa) {
+            return mesa.running ? ((Date.now() - mesa.inicio) / 60000) + mesa.tiempoTotal : mesa.tiempoTotal;
+        }
+
+        function calcularTotal(mesa) {
+            const tiempoUsadoHoras = calcularTiempoUsado(mesa) / 60;
+            const extrasTotal = mesa.extras.reduce((acc, e) => acc + e.valor, 0);
+            return (tiempoUsadoHoras * tarifaPorHora) + extrasTotal;
+        }
+
+        function actualizarResumen() {
+            document.getElementById('totalMesas').textContent = mesas.length;
+            document.getElementById('mesasActivas').textContent = mesas.filter(m => m.running).length;
+            document.getElementById('ingresosTotales').textContent =
+                `$${mesas.reduce((acc, m) => acc + calcularTotal(m), 0).toFixed(2)}`;
+        }
+
+        function renderMesas() {
+            const container = document.getElementById("mesasContainer");
+            container.innerHTML = "";
+
+            mesas.forEach((mesa, index) => {
+                const tiempoUsado = calcularTiempoUsado(mesa);
+                const total = calcularTotal(mesa);
+                const clase = `mesa ${mesa.running ? 'running' : ''} ${mesa.expirada ? 'expirada' : ''}`;
+
+                const mesaHTML = `
+          <div class="${clase}">
+            <div class="mesa-header">
+              <h2>🎱 Mesa ${index + 1}</h2>
+              <div><strong>$${total.toFixed(2)}</strong></div>
+            </div>
+            <div><strong>🕒 Tiempo:</strong> ${formatTime(tiempoUsado)}</div>
+            <div><strong>➕ Extras:</strong></div>
+            <ul class="extras-list">
+              ${mesa.extras.map(e => `
+                <li>
+                  <span>${e.nombre}</span>
+                  <span>$${e.valor.toFixed(2)}</span>
+                </li>
+              `).join('')}
+            </ul>
+  
+            <div class="input-group">
+              <input type="text" placeholder="Nombre extra" id="extraNombre${index}">
+              <input type="number" placeholder="Valor" id="extraValor${index}" min="0" step="0.01">
+            </div>
+  
+            <div class="input-group">
+              <input type="number" 
+                     id="temporizador${index}" 
+                     value="${mesa.temporizador ?? ''}" 
+                     placeholder="Temporizador (min)" 
+                     min="0"
+                     onchange="actualizarTemporizador(${index})">
+            </div>
+  
+            <div class="controls">
+              ${mesa.running ? `
+                <button class="btn-danger" onclick="detener(${index})">⏹ Detener</button>
+              ` : `
+                <button class="btn-success" onclick="iniciar(${index})">▶ Iniciar</button>
+              `}
+              <button class="btn-warning" onclick="agregarExtra(${index})">➕ Extra</button>
+              <button class="btn-danger" onclick="eliminarMesa(${index})">🗑 Eliminar</button>
+              <button class="btn-primary" onclick="resetearMesa(${index})">🔄 Resetear</button>
+              <button onclick="imprimir(${index})">🖨 Imprimir</button>
+            </div>
+          </div>
+        `;
+                container.innerHTML += mesaHTML;
+            });
+
+            actualizarResumen();
+            guardarDatos();
+        }
+
+        function iniciar(index) {
+            if (!mesas[index].running) {
+                mesas[index].inicio = Date.now();
+                mesas[index].running = true;
+                mesas[index].expirada = false;
+                renderMesas();
+            }
+        }
+
+        function detener(index) {
+            if (mesas[index].running) {
+                mesas[index].tiempoTotal += (Date.now() - mesas[index].inicio) / 60000;
+                mesas[index].running = false;
+                mesas[index].inicio = null;
+                renderMesas();
+            }
+        }
+
+        function resetearMesa(index) {
+            if (confirm(`¿Resetear mesa ${index + 1}? Se borrará todo el tiempo y extras.`)) {
+                mesas[index].inicio = null;
+                mesas[index].tiempoTotal = 0;
+                mesas[index].extras = [];
+                mesas[index].running = false;
+                mesas[index].expirada = false;
+                mesas[index].temporizador = null;
+                renderMesas();
+            }
+        }
+
+        function agregarExtra(index) {
+            const nombre = document.getElementById(`extraNombre${index}`).value.trim();
+            const valor = parseFloat(document.getElementById(`extraValor${index}`).value);
+
+            if (nombre && !isNaN(valor) && valor >= 0) {
+                mesas[index].extras.push({ nombre, valor });
+                document.getElementById(`extraNombre${index}`).value = '';
+                document.getElementById(`extraValor${index}`).value = '';
+                renderMesas();
+            }
+        }
+
+        function eliminarMesa(index) {
+            if (confirm(`¿Eliminar mesa ${index + 1}?`)) {
+                mesas.splice(index, 1);
+                renderMesas();
+                mostrarNotificacion(`Mesa ${index + 1} eliminada`);
+            }
+        }
+
+        function actualizarTemporizador(index) {
+            const valor = parseFloat(document.getElementById(`temporizador${index}`).value);
+            mesas[index].temporizador = isNaN(valor) ? null : Math.max(0, valor);
+            guardarDatos();
+        }
+
+        function mostrarConfig() {
+            document.getElementById('configPanel').style.display = 'block';
+            document.getElementById('tarifaInput').value = tarifaPorHora;
+            document.getElementById('soundToggle').checked = soundEnabled;
+        }
+
+        function ocultarConfig() {
+            document.getElementById('configPanel').style.display = 'none';
+        }
+
+        function guardarConfig() {
+            const nuevaTarifa = parseFloat(document.getElementById('tarifaInput').value);
+            if (!isNaN(nuevaTarifa) && nuevaTarifa >= 0) {
+                tarifaPorHora = nuevaTarifa;
+                soundEnabled = document.getElementById('soundToggle').checked;
+                guardarDatos();
+                renderMesas();
+                ocultarConfig();
+            }
+        }
+
+        function imprimir(index) {
+            const mesa = mesas[index];
+            const tiempoUsado = calcularTiempoUsado(mesa);
+            const total = calcularTotal(mesa);
+            const ventana = window.open('', '_blank');
+            ventana.document.write(`
+        <html>
+          <head><title>Ticket Mesa ${index + 1}</title></head>
+          <body>
+            <h1>Mesa ${index + 1}</h1>
+            <p>Tiempo: ${formatTime(tiempoUsado)}</p>
+            <ul>${mesa.extras.map(e => `<li>${e.nombre}: $${e.valor.toFixed(2)}</li>`).join('')}</ul>
+            <p><strong>Total: $${total.toFixed(2)}</strong></p>
+          </body>
+        </html>
+      `);
+            ventana.document.close();
+            ventana.print();
+        }
+
+        document.getElementById('addMesaBtn').addEventListener('click', () => {
+            mesas.push({
+                inicio: null,
+                tiempoTotal: 0,
+                extras: [],
+                running: false,
+                temporizador: null,
+                expirada: false
+            });
+            renderMesas();
+        });
+
+        setInterval(() => {
+            mesas.forEach((mesa, index) => {
+                if (mesa.temporizador && mesa.running) {
+                    const tiempoUsado = calcularTiempoUsado(mesa);
+                    if (tiempoUsado >= mesa.temporizador && !mesa.expirada) {
+                        mesa.expirada = true;
+                        detener(index);
+                        mostrarNotificacion(`⏰ Mesa ${index + 1} - Temporizador finalizado!`);
+                    }
+                }
+            });
+
+            actualizarTiempos(); // 👈 Solo actualiza visualmente tiempos y totales
+        }, 1000);
+
+
+        // Carga inicial
+        if (mesas.length === 0) {
+            for (let i = 0; i < 5; i++) {
+                mesas.push({
+                    inicio: null,
+                    tiempoTotal: 0,
+                    extras: [],
+                    running: false,
+                    temporizador: null,
+                    expirada: false
+                });
+            }
+        }
+        renderMesas();
+        function actualizarTiempos() {
+  mesas.forEach((mesa, index) => {
+    if (mesa.running) {
+      const tiempoUsado = calcularTiempoUsado(mesa);
+      const total = calcularTotal(mesa);
+
+      const mesaElement = document.querySelectorAll('.mesa')[index];
+      if (mesaElement) {
+        // Buscar el div que contiene el texto "🕒 Tiempo:"
+        const tiempoLabel = Array.from(mesaElement.querySelectorAll('div'))
+          .find(div => div.textContent.includes('🕒 Tiempo:'));
+
+        if (tiempoLabel) {
+          tiempoLabel.innerHTML = `<strong>🕒 Tiempo:</strong> ${formatTime(tiempoUsado)}`;
+        }
+
+        const totalDiv = mesaElement.querySelector('.mesa-header div');
+        if (totalDiv) {
+          totalDiv.innerHTML = `<strong>$${total.toFixed(2)}</strong>`;
+        }
+      }
+    }
+  });
+
+  actualizarResumen();
+}
+
+
+
+
+    </script>
+
+</body>
+
+</html>
