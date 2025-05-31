@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Administrador de Mesas de Billar</title>
+    <link rel="stylesheet" href="../public/css/adm_pool_style.css" />
+</head>
+
+<body>
+    <h1>🏁 Administrador de Mesas de Billar</h1>
+
+    <div id="resumen">
+        <div>Mesas Totales: <strong id="totalMesas">0</strong></div>
+        <div>Mesas Activas: <strong id="mesasActivas">0</strong></div>
+        <div>Ingresos Totales: <strong id="ingresosTotales">$0.00</strong></div>
+    </div>
+
+    <div id="mesasContainer"></div>
+
+    <div class="controls" style="justify-content: center; margin: 20px 0;">
+        <button id="addMesaBtn" class="btn-primary">➕ Nueva Mesa</button>
+        <button onclick="mostrarConfig()" class="btn-primary">⚙️ Configuración</button>
+        <button onclick="exportarDatos()" class="btn-primary">📤 Exportar</button>
+        <button onclick="document.getElementById('importInput').click()" class="btn-primary">📥 Importar</button>
+        <input type="file" id="importInput" hidden accept=".json">
+    </div>
+
+    <div id="configPanel">
+        <h3>Configuración</h3>
+        <label>Tarifa por minuto ($):
+            <input type="number" id="tarifaInput" step="0.01" value="0.33">
+        </label>
+        <br><br>
+        <label>
+            <input type="checkbox" id="soundToggle" checked> Sonido de notificaciones
+        </label>
+        <br><br>
+        <button onclick="guardarConfig()" class="btn-success">Guardar</button>
+        <button onclick="ocultarConfig()" class="btn-danger">Cerrar</button>
+    </div>
+
+    <div id="notificaciones"></div>
+    <audio id="alertaSonido" src="https://actions.google.com/sounds/v1/alarms/beep_short.ogg"></audio>
+
+    <script src="../public/js/adm_pool_app.js"></script>
+</body>
+
+</html>
