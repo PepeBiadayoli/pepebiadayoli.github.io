@@ -5,6 +5,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>JBiadayoli Portfolio</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <link rel="stylesheet" href="public/css/styles.css">
 </head>
 
@@ -42,10 +43,9 @@
         <div class="container">
             <div class="header__inner">
                 <a href="#" class="logo">
-                    <svg version="1.0" class="logo__img" xmlns="http://www.w3.org/2000/svg" width="600.000000pt" height="200.000000pt"
-                        viewBox="0 0 600.000000 200.000000" preserveAspectRatio="xMidYMid meet">
-                        <g transform="translate(0.000000,200.000000) scale(0.100000,-0.100000)" 
-                            stroke="none">
+                    <svg version="1.0" class="logo__img" xmlns="http://www.w3.org/2000/svg" width="600.000000pt"
+                        height="200.000000pt" viewBox="0 0 600.000000 200.000000" preserveAspectRatio="xMidYMid meet">
+                        <g transform="translate(0.000000,200.000000) scale(0.100000,-0.100000)" stroke="none">
                             <path d="M995 1851 c-67 -16 -117 -65 -135 -130 -6 -23 -9 -132 -8 -267 3
 -221 2 -231 -20 -280 -32 -71 -79 -114 -143 -130 -28 -7 -56 -11 -61 -8 -15 9
 -38 -17 -38 -42 0 -21 4 -24 42 -24 95 0 181 -78 213 -192 13 -46 15 -100 13
@@ -154,7 +154,8 @@ l-57 -4 0 71 0 71 53 0 c29 0 61 -6 70 -12z" />
         <section class="hero">
             <div class="hero__content">
                 <h1 class="hero__title">Me llamo Jose Biadayoli <span>Ingeniero Informatico</span> y
-                    <span>Full-Stack</span> developer</h1>
+                    <span>Full-Stack</span> developer
+                </h1>
                 <div class="hero__description">Diseño conexiones, no solo páginas web; cada línea de código es un paso
                     hacia una experiencia de navegación perfecta.</div>
                 <a class="button button__primary" href="#contacts">Contactame =></a>
@@ -165,9 +166,9 @@ l-57 -4 0 71 0 71 53 0 c29 0 61 -6 70 -12z" />
         </section>
 
         <figure class="quote">
-            <blockquote class="quote__text">Cuando algo es difícil de programar, probablemente algo está mal.
+            <blockquote class="quote__text">¡Rechaza el sentido común para hacer posible lo imposible!
             </blockquote>
-            <figcaption class="quote__author">Martin Fowler</figcaption>
+            <figcaption class="quote__author">Simon</figcaption>
         </figure>
 
         <section class="projects">
@@ -185,9 +186,12 @@ l-57 -4 0 71 0 71 53 0 c29 0 61 -6 70 -12z" />
                     </ul>
                     <div class="project__content">
                         <div class="project__name">Administrador Billar</div>
-                        <div class="project__description">Controla el tiempo y ganancias en el arriendo de mesas de Billar</div>
+                        <div class="project__description">Controla el tiempo y ganancias en el arriendo de mesas de
+                            Billar</div>
                         <div class="project__links">
-                            <a href="views/adm_billar.html" class="button ">Ir
+                            <a href="views/adm_billar.html" class="button ">Ver
+                                =&gt;</a>
+                            <a href="https://github.com/PepeBiadayoli/Administrador_Billar" target="_blank" class="button ">GitHub
                                 =&gt;</a>
                         </div>
                     </div>
@@ -296,46 +300,51 @@ l-57 -4 0 71 0 71 53 0 c29 0 61 -6 70 -12z" />
                 </div>
                 <div class="skills__list">
                     <div class="skill-block">
-                        <div class="skill-block__name">Lenguajes</div>
+                        <div class="skill-block__name"><i class="fas fa-code"></i> Lenguajes</div>
                         <ul class="skill-block__list">
-                            <li class="skill-block__skill">JavaScript</li>
-                            <li class="skill-block__skill">TypeScript</li>
                             <li class="skill-block__skill">Python</li>
+                            <li class="skill-block__skill">TypeScript</li>
+                            <li class="skill-block__skill">JavaScript</li>
+                            <li class="skill-block__skill">PHP</li>
                         </ul>
                     </div>
+
                     <div class="skill-block">
-                        <div class="skill-block__name">Base De Datos</div>
+                        <div class="skill-block__name"><i class="fas fa-cubes"></i> Frameworks / Librerías</div>
                         <ul class="skill-block__list">
-                            <li class="skill-block__skill">SQLite</li>
-                            <li class="skill-block__skill">PostgreSQL</li>
+                            <li class="skill-block__skill">React</li>
+                            <li class="skill-block__skill">Flask</li>
+                            <li class="skill-block__skill">FlutterFlow</li>
                         </ul>
                     </div>
+
                     <div class="skill-block">
-                        <div class="skill-block__name">Otros</div>
+                        <div class="skill-block__name"><i class="fas fa-database"></i> Bases de datos</div>
+                        <ul class="skill-block__list">
+                            <li class="skill-block__skill">MySQL</li>
+                            <li class="skill-block__skill">SQL Server</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-block">
+                        <div class="skill-block__name"><i class="fas fa-tools"></i> Herramientas / DevOps</div>
+                        <ul class="skill-block__list">
+                            <li class="skill-block__skill">Git / GitHub</li>
+                            <li class="skill-block__skill">Docker</li>
+                            <li class="skill-block__skill">Hosting</li>
+                        </ul>
+                    </div>
+
+                    <div class="skill-block">
+                        <div class="skill-block__name"><i class="fas fa-globe"></i> Frontend / CMS / Otros</div>
                         <ul class="skill-block__list">
                             <li class="skill-block__skill">HTML</li>
                             <li class="skill-block__skill">CSS</li>
-                            <li class="skill-block__skill">SASS</li>
-                            <li class="skill-block__skill">SCSS</li>
-                            <li class="skill-block__skill">Less</li>
-                            <li class="skill-block__skill">Stylus</li>
-                            <li class="skill-block__skill">EJS</li>
-                            <li class="skill-block__skill">Jinja2</li>
-                            <li class="skill-block__skill">Pug</li>
-                        </ul>
-                    </div>
-                    <div class="skill-block">
-                        <div class="skill-block__name">Frameworks</div>
-                        <ul class="skill-block__list">
-                            <li class="skill-block__skill">React</li>
-                            <li class="skill-block__skill">Next</li>
-                            <li class="skill-block__skill">Gulp</li>
-                            <li class="skill-block__skill">Express</li>
-                            <li class="skill-block__skill">Flask</li>
-                            <li class="skill-block__skill">Quart</li>
+                            <li class="skill-block__skill">CMS</li>
                         </ul>
                     </div>
                 </div>
+
             </div>
         </section>
 
