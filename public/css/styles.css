@@ -652,3 +652,24 @@ body {
         font-size: 24px;
     }
 }
+
+
+
+/*----------------------PROJECTS----------------------*/
+.path {
+    align-self: start;
+    display: block;
+    width: 100%;
+}
+.path__name {
+    font-size: 32px;
+    font-weight: 600;
+}
+.path__name::before {
+    content: "/";
+    color: var(--font-color2);
+}
+.path__description {
+    color: var(--gray);
+    margin-top: 16px;
+}
